@@ -94,6 +94,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- Auto-resize Textarea & Form Keybindings ---
+  function adjustTextareaHeight() {
+    queryInput.style.height = 'auto';
+    // Calculate new height, capping it at a maximum (e.g. 200px)
+    const newHeight = Math.min(queryInput.scrollHeight, 200);
+    queryInput.style.height = newHeight + 'px';
+  }
+
+  queryInput.addEventListener('input', adjustTextareaHeight);
+
+  queryInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      // Only submit if form is valid and not already submitting
+      if (queryInput.value.trim() && !submitBtn.disabled) {
+        queryForm.dispatchEvent(new Event('submit', { cancelable: true }));
+      }
+    }
+  });
+
+  // Global key listener for Escape key to close settings modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      settingsModal.classList.add('hidden');
+      modelOptions.classList.add('hidden');
+    }
+  });
+
   // --- Activity Control ---
   function showActivity(text) {
     if (!activityIndicator) return;
@@ -344,10 +372,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function scrollToBottom() {
+  let isStreamingResponse = false;
+
+  function scrollToBottom(forceSmooth = false) {
+    // Avoid layout thrashing and jittering by using instant scroll during SSE chunk stream
+    const scrollBehavior = (isStreamingResponse && !forceSmooth) ? 'auto' : 'smooth';
     chatView.scrollTo({
       top: chatView.scrollHeight,
-      behavior: 'smooth'
+      behavior: scrollBehavior
     });
   }
 
@@ -546,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
           chatMessages.appendChild(node);
         });
 
-        setTimeout(scrollToBottom, 100);
+        setTimeout(() => scrollToBottom(true), 100);
       } else {
         welcomeView.classList.remove('hidden');
         chatView.classList.add('hidden');
@@ -566,6 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const query = card.getAttribute('data-query');
       if (query) {
         queryInput.value = query;
+        adjustTextareaHeight();
         queryForm.dispatchEvent(new Event('submit', { cancelable: true }));
       }
     });
@@ -608,11 +641,13 @@ document.addEventListener('DOMContentLoaded', () => {
     chatMessages.appendChild(userNode);
     
     queryInput.value = '';
+    // Reset heights
+    queryInput.style.height = 'auto';
     queryInput.disabled = true;
     submitBtn.disabled = true;
     
     showActivity('Conectando con el agente...');
-    scrollToBottom();
+    scrollToBottom(true);
 
     // Agent Message Bubble (Structured in Gemini style with loading skeleton)
     const agentNode = document.createElement('div');
@@ -644,10 +679,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     chatMessages.appendChild(agentNode);
-    scrollToBottom();
+    scrollToBottom(true);
 
     let currentThoughtAccordion = null;
     let currentToolAccordion = null;
+    isStreamingResponse = true;
 
     try {
       const response = await fetch('/api/chat/stream', {
@@ -702,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stepsContainer.appendChild(currentThoughtAccordion.element);
             currentThoughtAccordion.updateContent(data);
             currentThoughtAccordion.open();
-            scrollToBottom();
+            scrollToBottom(true);
           }
 
           else if (type === 'action') {
@@ -717,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stepsContainer.appendChild(currentToolAccordion.element);
             currentToolAccordion.updateContent(`Parámetros:\n${JSON.stringify(data.args, null, 2)}`);
             currentToolAccordion.open();
-            scrollToBottom();
+            scrollToBottom(true);
           }
 
           else if (type === 'observation') {
@@ -726,7 +762,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const currentContent = currentToolAccordion.element.querySelector('.step-content').textContent;
               currentToolAccordion.updateContent(`${currentContent}\n\nObservación:\n${data}`);
             }
-            scrollToBottom();
+            scrollToBottom(true);
           }
 
           else if (type === 'finalAnswer') {
@@ -737,7 +773,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             answerCard.classList.remove('hidden');
             renderMarkdownAndMath(data, answerCard);
-            scrollToBottom();
+            scrollToBottom(true);
           }
 
           else if (type === 'error') {
@@ -749,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
             errorDiv.style.borderColor = '#ff5252';
             errorDiv.innerHTML = `<strong>Error de ejecución:</strong><br>${data}`;
             agentNode.querySelector('.message-content-wrapper').appendChild(errorDiv);
-            scrollToBottom();
+            scrollToBottom(true);
           }
         }
       }
@@ -764,8 +800,9 @@ document.addEventListener('DOMContentLoaded', () => {
       errorDiv.style.borderColor = '#ff5252';
       errorDiv.innerHTML = `<strong>Fallo de Red:</strong><br>${error.message}`;
       agentNode.querySelector('.message-content-wrapper').appendChild(errorDiv);
-      scrollToBottom();
+      scrollToBottom(true);
     } finally {
+      isStreamingResponse = false;
       clearLoadingState();
       hideActivity();
       queryInput.disabled = false;
