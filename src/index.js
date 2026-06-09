@@ -5,6 +5,8 @@ import { VeniceLlmService } from './services/llm.js';
 import { createSearchAhmiaTool } from './tools/search-ahmia.js';
 import { createSearchTordexTool } from './tools/search-tordex.js';
 import { createSearchDuckDuckGoTool } from './tools/search-duckduckgo.js';
+import { createSearchTorchTool } from './tools/search-torch.js';
+import { createSearchPhobosTool } from './tools/search-phobos.js';
 import { createFetchOnionTool } from './tools/fetch-onion.js';
 import { TorAgentEngine } from './agent.js';
 
@@ -52,8 +54,10 @@ async function bootstrap() {
   const searchTool = createSearchAhmiaTool({ torFetch });
   const tordexTool = createSearchTordexTool({ torFetch });
   const duckduckgoTool = createSearchDuckDuckGoTool({ torFetch });
+  const torchTool = createSearchTorchTool({ torFetch });
+  const phobosTool = createSearchPhobosTool({ torFetch });
   const fetchTool = createFetchOnionTool({ torFetch });
-  const tools = [searchTool, tordexTool, duckduckgoTool, fetchTool];
+  const tools = [searchTool, tordexTool, duckduckgoTool, torchTool, phobosTool, fetchTool];
 
   // 4. Initialize Agent Engine
   const agent = new TorAgentEngine({

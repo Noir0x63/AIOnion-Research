@@ -7,6 +7,8 @@ import { VeniceLlmService } from './services/llm.js';
 import { createSearchAhmiaTool } from './tools/search-ahmia.js';
 import { createSearchTordexTool } from './tools/search-tordex.js';
 import { createSearchDuckDuckGoTool } from './tools/search-duckduckgo.js';
+import { createSearchTorchTool } from './tools/search-torch.js';
+import { createSearchPhobosTool } from './tools/search-phobos.js';
 import { createFetchOnionTool } from './tools/fetch-onion.js';
 import { TorAgentEngine } from './agent.js';
 import { initDatabase, saveMessage, getLastMessages, clearHistory, createThread, getThreads, deleteThread, renameThread } from './utils/db.js';
@@ -38,8 +40,10 @@ const torFetch = createTorFetch({ proxyUrl });
 const searchAhmia = createSearchAhmiaTool({ torFetch });
 const searchTordex = createSearchTordexTool({ torFetch });
 const searchDuckDuckGo = createSearchDuckDuckGoTool({ torFetch });
+const searchTorch = createSearchTorchTool({ torFetch });
+const searchPhobos = createSearchPhobosTool({ torFetch });
 const fetchOnion = createFetchOnionTool({ torFetch });
-const tools = [searchAhmia, searchTordex, searchDuckDuckGo, fetchOnion];
+const tools = [searchAhmia, searchTordex, searchDuckDuckGo, searchTorch, searchPhobos, fetchOnion];
 
 /**
  * Endpoint to retrieve all chat threads.
