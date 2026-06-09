@@ -79,16 +79,22 @@ CRITICAL RULES:
    * @returns {Object} { thought, action, args, finalAnswer }
    */
   #parseResponse(text) {
-    const thoughtMatch = text.match(/Thought:\s*([\s\S]*?)(?:Action:|Final Answer:|$)/i);
+    // Robust Thought parsing handling optional markdown asterisks and colon placements
+    const thoughtRegex = /(?:\*?\*?Thought\*?\*?\s*:?\s*\*?\*?)\s*([\s\S]*?)(?=(?:\*?\*?Action\*?\*?\s*:?\s*\*?\*?)|(?:\*?\*?Final Answer\*?\*?\s*:?\s*\*?\*?)|$)/i;
+    const thoughtMatch = text.match(thoughtRegex);
     const thought = thoughtMatch ? thoughtMatch[1].trim() : '';
 
-    if (text.includes('Final Answer:')) {
-      const finalAnswerParts = text.split(/Final Answer:/i);
+    // Robust Final Answer parsing
+    const finalAnswerRegex = /(?:\*?\*?Final\s+Answer\*?\*?\s*:?\s*\*?\*?)/i;
+    if (finalAnswerRegex.test(text)) {
+      const finalAnswerParts = text.split(finalAnswerRegex);
       const finalAnswer = finalAnswerParts[finalAnswerParts.length - 1].trim();
       return { thought, finalAnswer };
     }
 
-    const actionMatch = text.match(/Action:\s*(\w+)\s*\(([\s\S]*?)\)/i);
+    // Robust Action parsing
+    const actionRegex = /(?:\*?\*?Action\*?\*?\s*:?\s*\*?\*?)\s*(\w+)\s*\(([\s\S]*?)\)/i;
+    const actionMatch = text.match(actionRegex);
     if (!actionMatch) {
       // If we cannot parse a structured action and there is no Final Answer, treat the entire block as the answer
       return { thought, finalAnswer: text };
