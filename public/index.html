@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noir - Tor Dark Web Agent</title>
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Marked.js for Premium Markdown Parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- KaTeX for High Performance TeX Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+  <!-- Radial Glow Background -->
+  <div class="radial-glow"></div>
+
+  <div class="app-container">
+    
+    <!-- Sidebar / Chat Sessions panel -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <button class="icon-btn" id="sidebar-toggle-btn" title="Cerrar/Abrir menú lateral">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
+        <span class="sidebar-title">Noir</span>
+      </div>
+      <div class="sidebar-top">
+        <button id="new-chat-btn" class="new-chat-btn-pill">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          <span>Nuevo chat</span>
+        </button>
+      </div>
+
+      <div class="thread-section-label">Recientes</div>
+      <div id="thread-list" class="thread-list">
+        <!-- Dynamically populated threads list -->
+      </div>
+
+      <!-- Sidebar Bottom Links -->
+      <div class="sidebar-bottom">
+
+        <div class="bottom-item" id="sidebar-settings-btn" title="Ajustes de Noir">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span>Configuración</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Workspace -->
+    <div class="chat-area">
+      
+      <!-- Gemini Top bar with Model Dropdown and Hamburger toggler -->
+      <header class="app-header">
+        <div class="header-left-group">
+        </div>
+
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        
+        <!-- Greeting / Initial View (Gemini Style Welcome) -->
+        <div id="welcome-view" class="welcome-view">
+          <div class="welcome-inner">
+            <h1 class="gemini-greeting">Hola, Investigador</h1>
+            <h2 class="gemini-subgreeting">¿Qué misterio de la red profunda rastreamos hoy?</h2>
+            
+            <!-- Gemini Suggestion Cards Grid -->
+            <div class="suggestion-grid">
+              <div class="suggestion-card" data-query="Buscar foros de ciberseguridad en la red Tor.">
+                <p>Encontrar foros activos de seguridad y hacking en dominios .onion.</p>
+                <div class="card-icon">🔍</div>
+              </div>
+              <div class="suggestion-card" data-query="Buscar servicios de correo cifrado y mensajería en Tor.">
+                <p>Localizar proveedores de email seguro y chat anonimizados.</p>
+                <div class="card-icon">✉️</div>
+              </div>
+              <div class="suggestion-card" data-query="Listar directorios de enlaces .onion confiables de tipo v3.">
+                <p>Encontrar wikis y directorios de links actualizados sobre la red profunda.</p>
+                <div class="card-icon">🔗</div>
+              </div>
+              <div class="suggestion-card" data-query="¿Cómo funciona el encriptado de Noir y la seguridad al usar Tor SOCKS5?">
+                <p>Explicar los protocolos criptográficos y la mitigación de DNS leaks.</p>
+                <div class="card-icon">🛡️</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat History View -->
+        <div id="chat-view" class="chat-view hidden">
+          <div id="chat-messages" class="chat-messages"></div>
+        </div>
+
+        <!-- Status / Activity Indicator -->
+        <div id="activity-indicator" class="activity-indicator hidden">
+          <div class="activity-dot"></div>
+          <span id="activity-text">Noir está pensando...</span>
+        </div>
+
+        <!-- Input Bar Section -->
+        <div class="input-section">
+          <form id="query-form" class="input-container">
+            
+            <!-- Image / Mic placeholder decorators to look exactly like Gemini Input bar -->
+            <div class="input-left-icons">
+              <button type="button" class="bar-icon-btn" title="Añadir imagen (Simulado)">
+                <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/></svg>
+              </button>
+            </div>
+
+            <!-- Query Input -->
+            <input type="text" id="query-input" placeholder="Escribe aquí tu consulta para Noir-Tor..." autocomplete="off" required>
+
+            <!-- Send Icon -->
+            <button type="submit" id="submit-btn" class="action-btn-circle" title="Enviar">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+
+          </form>
+
+          <!-- Gemini Footer Disclaimer -->
+          <footer class="gemini-footer">
+            Noir puede cometer errores. Considera verificar la información importante obtenida de la red Tor.
+          </footer>
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Settings Configuration Modal (AI Studio style) -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Ajustes del Sistema (Noir)</h2>
+        <button class="icon-btn" id="close-settings-btn" title="Cerrar">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- System Prompt -->
+        <div class="form-group">
+          <label for="settings-system-prompt">System Prompt</label>
+          <textarea id="settings-system-prompt" rows="5" placeholder="Escribe las instrucciones iniciales del agente aquí..."></textarea>
+        </div>
+
+        <!-- Model Selection (Custom dropdown styled cleanly) -->
+        <div class="form-group">
+          <label>Modelo</label>
+          <div class="custom-select-container">
+            <div class="custom-select-trigger" id="model-trigger">
+              <span id="model-trigger-text">DeepSeek v4 Flash (Recomendado)</span>
+              <!-- Down Chevron SVG -->
+              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+            </div>
+            <div class="custom-select-options hidden" id="model-options">
+              <div class="custom-option" data-value="deepseek-v4-flash">DeepSeek v4 Flash (Recomendado)</div>
+              <div class="custom-option" data-value="deepseek-v4-pro">DeepSeek v4 Pro</div>
+              <div class="custom-option" data-value="deepseek-v3.2">DeepSeek v3.2</div>
+              <div class="custom-option" data-value="llama-3.3-70b">Llama 3.3 70B</div>
+              <div class="custom-option" data-value="google-gemma-4-31b-it">Gemma 4 31B IT</div>
+              <div class="custom-option" data-value="gemini-3-5-flash">Gemini 3.5 Flash</div>
+              <div class="custom-option" data-value="custom">Otro (Modelo personalizado)...</div>
+            </div>
+          </div>
+          <input type="hidden" id="settings-model" value="deepseek-v4-flash">
+        </div>
+
+        <!-- Custom Model Input Group -->
+        <div class="form-group hidden" id="custom-model-group">
+          <label for="settings-custom-model">ID del Modelo Personalizado</label>
+          <input type="text" id="settings-custom-model" placeholder="Escribe el ID del modelo (ej: deepseek-chat, grok-4-3)" style="background-color: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-primary); outline: none;">
+        </div>
+
+        <!-- Temperature Slider -->
+        <div class="form-group">
+          <div class="slider-header">
+            <label for="settings-temperature">Temperatura</label>
+            <span id="temp-val-display">0.1</span>
+          </div>
+          <input type="range" id="settings-temperature" min="0.0" max="1.0" step="0.05" value="0.1">
+        </div>
+
+        <!-- Max Iterations Slider -->
+        <div class="form-group">
+          <div class="slider-header">
+            <label for="settings-max-iterations">Máximo de Iteraciones ReAct</label>
+            <span id="iterations-val-display">6</span>
+          </div>
+          <input type="range" id="settings-max-iterations" min="1" max="10" step="1" value="6">
+        </div>
+
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; width: 100%;">
+        <button id="clear-history-btn" class="modal-btn" style="background-color: rgba(255, 23, 68, 0.1); color: #ff1744; border: 1px solid rgba(255, 23, 68, 0.2);">Limpiar Historial</button>
+        <button id="save-settings-btn" class="modal-btn primary">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
